@@ -1,4 +1,6 @@
-package com.cheiroesabor.ecommerce.infrastructure.entity.enumFolder;
+package com.cheiroesabor.ecommerce.infrastructure.entity.enums;
+
+
 
 public enum StatusAgendamentos {
 

@@ -1,4 +1,7 @@
-package com.cheiroesabor.ecommerce.infrastructure.entity.enumFolder;
+package com.cheiroesabor.ecommerce.infrastructure.entity.enums;
+
+
+
 
 public enum CombosList {
 
@@ -7,7 +10,7 @@ public enum CombosList {
     COMBO_MINI ("25 Un- R$ 28,00"), 
     COMBO_PERSONALIZADO("+ 100 Un");
     
-    private String descricao;
+    private final String descricao;
 
     CombosList(String descricao){
         this.descricao = descricao;

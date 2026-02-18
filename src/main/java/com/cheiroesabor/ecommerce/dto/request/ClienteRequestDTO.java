@@ -1,29 +1,70 @@
 package com.cheiroesabor.ecommerce.dto.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
-import jakarta.persistence.Column;
+public record ClienteRequestDTO(
+    @NotBlank(message = "O nome é obrigatório")
+    String nome,
+
+    @NotBlank(message = "O e-mail é obrigatório")
+    @Email(message = "Formato de e-mail inválido")
+    String email,
+
+    @NotBlank(message = "O celular é obrigatório")
+    @Pattern(regexp = "\\d{10,11}", message = "O celular deve ter entre 10 e 11 dígitos")
+    String cell
+) {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*package com.cheiroesabor.ecommerce.dto.request;
+import com.cheiroesabor.ecommerce.infrastructure.entity.ClientesEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class ClienteRequestDTO {
-
     
-
-    @Column(nullable = false)
     @NotBlank(message = "O nome é obrigatório")
     private String nome;
-
-    @Column(unique = true, nullable = false) 
+    
     @NotBlank(message = "O e-mail é obrigatório") 
     @Email(message = "Formato de e-mail inválido")
     private String email;
-
-    @Column(nullable = false) 
+    
     @NotBlank(message = "O celular é obrigatório")
     private String cell;
 
 
+    public ClienteRequestDTO(@NotBlank(message = "O nome é obrigatório") String nome,
+            @NotBlank(message = "O e-mail é obrigatório") @Email(message = "Formato de e-mail inválido") String email,
+            @NotBlank(message = "O celular é obrigatório") String cell) {
+        this.nome = nome;
+        this.email = email;
+        this.cell = cell;
+    }
 
+    public ClienteRequestDTO(ClientesEntity cliente) {
+        this.nome = cliente.getNome();
+        this.email = cliente.getEmail();
+        this.cell = cliente.getCell();
+    }
 
 
 
@@ -52,4 +93,7 @@ public class ClienteRequestDTO {
     }
 
 
-}
+}*/
+
+
+

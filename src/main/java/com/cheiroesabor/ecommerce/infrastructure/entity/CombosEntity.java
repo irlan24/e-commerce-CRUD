@@ -3,7 +3,7 @@ package com.cheiroesabor.ecommerce.infrastructure.entity;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.cheiroesabor.ecommerce.infrastructure.entity.enumFolder.CombosList;
+import com.cheiroesabor.ecommerce.infrastructure.entity.enums.CombosList;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +35,7 @@ public class CombosEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "Nome do combo é obrigatório")
+    @NotNull(message = "Nome do combo é obrigatório")
     private CombosList comboList; // Depois achar uma outra alternativa que substitua o ENUM, para maior dinamismo no banco
 
     private String descricaoCombo;
