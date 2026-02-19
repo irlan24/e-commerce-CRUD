@@ -34,10 +34,8 @@ public class ClienteController {
     // Exemplo de endpoint para buscar um cliente por ID
     @GetMapping("/{id}")
     public ClienteResponseDTO getClienteById(@PathVariable Long id) {
-
         return service.findByID(id);
     }
-
 
     // Exemplo de endpoint para criar um novo cliente
     @PostMapping //lê o JSON da requisição (@RequestBody) e ativa as validações do DTO (@Valid)
