@@ -1,16 +1,17 @@
 package com.cheiroesabor.ecommerce.controller;
 
+import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.cheiroesabor.ecommerce.dto.request.ClienteRequestDTO;
 import com.cheiroesabor.ecommerce.dto.response.ClienteResponseDTO;
@@ -22,29 +23,48 @@ import jakarta.validation.Valid;
 @RequestMapping("/clientes")
 public class ClienteController {
 
-    @Autowired
-    private ClientesService service;
+    
+    private final ClientesService service;
+
+    // Injeção de dependência via construtor
+    public ClienteController(ClientesService service){
+        this.service = service;
+    }
 
     // Exemplo de endpoint para buscar todos os clientes
     @GetMapping
-    public List<ClienteResponseDTO> findAll() {
-        return service.findAll();
+    public ResponseEntity<List<ClienteResponseDTO>> findAll() {
+
+        List<ClienteResponseDTO> list = service.findAll();
+        return ResponseEntity.ok(list);
     }
 
     // Exemplo de endpoint para buscar um cliente por ID
     @GetMapping("/{id}")
-    public ClienteResponseDTO getClienteById(@PathVariable Long id) {
-        return service.findByID(id);
+    public ResponseEntity<ClienteResponseDTO> getClienteById(@PathVariable Long id) {
+        ClienteResponseDTO dto = service.findById(id);
+        return ResponseEntity.ok(dto);
     }
 
     // Exemplo de endpoint para criar um novo cliente
-    @PostMapping //lê o JSON da requisição (@RequestBody) e ativa as validações do DTO (@Valid)
-    public ResponseEntity<Void> criarCliente(@RequestBody @Valid ClienteRequestDTO dto){
-        service.salvar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @PostMapping
+    public ResponseEntity<ClienteResponseDTO> criarCliente(@RequestBody @Valid ClienteRequestDTO dto) {
+        ClienteResponseDTO novoCliente = service.salvar(dto);
+        
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(novoCliente.id()) 
+                    .toUri();
+                    
+        return ResponseEntity.created(uri).body(novoCliente);
     }
 
-   
+    // Exemplo de endpoint para deletar um cliente por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id){
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }
