@@ -41,7 +41,7 @@ public class ClientesService {
     }
 
 
-    // Exemplo de método para salvar um cliente
+    // Exemplo de método para salvar um cliente NOVO
     public ClienteResponseDTO salvar(ClienteRequestDTO dto){
 
         ClientesEntity cliente = mapper.toEntity(dto);

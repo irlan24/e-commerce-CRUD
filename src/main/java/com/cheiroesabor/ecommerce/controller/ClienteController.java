@@ -51,6 +51,7 @@ public class ClienteController {
     public ResponseEntity<ClienteResponseDTO> criarCliente(@RequestBody @Valid ClienteRequestDTO dto) {
         ClienteResponseDTO novoCliente = service.salvar(dto);
         
+        // validação e representação ou representar identificadores
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(novoCliente.id()) 
@@ -63,6 +64,7 @@ public class ClienteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id){
         service.deletar(id);
+        // .noContent() -> código de status HTTP para 204
         return ResponseEntity.noContent().build();
     }
 

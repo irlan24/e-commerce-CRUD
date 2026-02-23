@@ -1,4 +1,4 @@
-package com.cheiroesabor.ecommerce.infrastructure.handler;
+package com.cheiroesabor.ecommerce.exception.handler;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.cheiroesabor.ecommerce.exception.BusinessException;
 import com.cheiroesabor.ecommerce.exception.ResourceNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,11 +39,15 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex,
             HttpServletRequest request) {
 
-        String errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(err -> err.getField() + ": " + err.getDefaultMessage())
-                .collect(Collectors.joining(", "));
+        String errors = ex.getBindingResult() // Todos os erros gerais  do      provindo do JSON
+
+                .getFieldErrors() //Retorna uma Lista com os Específicos (Preenchimentos errados do usuário)
+
+                .stream() // Transforma a lista em fluxo, para processamento individual
+
+                .map(err -> err.getField() + ": " + err.getDefaultMessage()) // formata cada Campo da lista (ex: email) + Msg inserida no DTO
+
+                .collect(Collectors.joining(", ")); // Concatena tudo com separação por ", ". Ex de retorno: "email: deve ser um e-mail válido, nome: o campo não pode estar em branco".
 
         MessageError messageError = new MessageError(
                 LocalDateTime.now(),
@@ -53,7 +58,30 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageError);
+
+        }
+
+
+        // Exceção para tratar as duplicidades de cadastro (PUT ou POST) (Bad_request 400)
+        @ExceptionHandler(BusinessException.class)
+        public ResponseEntity<MessageError> handleBusiness(
+                BusinessException ex, HttpServletRequest request) {
+
+        MessageError error = new MessageError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.badRequest().body(error);
+
+        // EXEMPLO DE USO
+        // if(repository.existsByEmail(dto.email())){
+                //throw new BusinessException("Email já cadastrado");}
 }
+        
 
 
 

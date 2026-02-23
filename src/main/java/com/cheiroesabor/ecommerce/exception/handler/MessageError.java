@@ -1,4 +1,4 @@
-package com.cheiroesabor.ecommerce.infrastructure.handler;
+package com.cheiroesabor.ecommerce.exception.handler;
 
 import java.time.LocalDateTime;
 
