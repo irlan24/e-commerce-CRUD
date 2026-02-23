@@ -2,7 +2,6 @@ package com.cheiroesabor.ecommerce.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cheiroesabor.ecommerce.dto.request.ClienteRequestDTO;
@@ -17,11 +16,15 @@ import com.cheiroesabor.ecommerce.mapper.ClienteMapper;
 @Service
 public class ClientesService {
 
-    @Autowired
-    private ClienteRepository repository;
     
-    @Autowired
+    private ClienteRepository repository;
     private ClienteMapper mapper;
+
+    // Construtor para injeção de dependências
+    public ClientesService(ClienteRepository repository, ClienteMapper mapper){
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     // Exemplo de busca por ID);
     public ClienteResponseDTO findById(Long id) {
@@ -34,11 +37,7 @@ public class ClientesService {
     // Exemplo para buscar todos os clientes
     public List<ClienteResponseDTO> findAll() {
         List<ClientesEntity> clientes = repository.findAll();
-
-        if(clientes.isEmpty()){
-            throw new ResourceNotFoundException("Nenhum cliente encontrado");
-        }
-
+        
         return mapper.toDTOList(clientes); 
     }
 

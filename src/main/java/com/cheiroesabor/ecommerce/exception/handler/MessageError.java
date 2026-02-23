@@ -8,6 +8,6 @@ public record MessageError(
     LocalDateTime hora,
     Integer status,
     String error,
-    String mensagem,
+    Object mensagem, // Aceita String ou List
     String path
 ) {}  

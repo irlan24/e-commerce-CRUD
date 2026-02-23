@@ -14,7 +14,7 @@ public record ClienteRequestDTO(
 
     @NotBlank(message = "O celular é obrigatório")
     @Pattern(regexp = "\\d{10,11}", message = "O celular deve ter entre 10 e 11 dígitos")
-    String cell
+    String telefone
 ) {}
 
 

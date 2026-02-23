@@ -73,7 +73,7 @@ public class ClienteController {
 
     // Exemplo de endpoint para atualizar parcialmente um cliente por ID
     @PatchMapping("/{id}")
-    public ResponseEntity<ClienteResponseDTO> atualizarParcial(@PathVariable Long id, @RequestBody ClienteUpdateDTO dto){
+    public ResponseEntity<ClienteResponseDTO> atualizarParcial(@PathVariable Long id, @RequestBody @Valid ClienteUpdateDTO dto){
 
         // código de status HTTP para 200
         return ResponseEntity.ok(service.patch(id, dto));
