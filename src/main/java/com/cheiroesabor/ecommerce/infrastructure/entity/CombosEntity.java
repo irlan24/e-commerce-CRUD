@@ -15,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +34,7 @@ public class CombosEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "Nome do combo é obrigatório")
+    @Column(nullable = false)
     private CombosList comboList; // Depois achar uma outra alternativa que substitua o ENUM, para maior dinamismo no banco
 
     private String descricaoCombo;

@@ -38,8 +38,8 @@ public class ClienteController {
     @GetMapping
     public ResponseEntity<List<ClienteResponseDTO>> findAll() {
 
-        List<ClienteResponseDTO> list = service.findAll();
-        return ResponseEntity.ok(list);
+        List<ClienteResponseDTO> listDto = service.findAll();
+        return ResponseEntity.ok(listDto);
     }
 
     // Exemplo de endpoint para buscar um cliente por ID
@@ -54,7 +54,7 @@ public class ClienteController {
     public ResponseEntity<ClienteResponseDTO> criarCliente(@RequestBody @Valid ClienteRequestDTO dto) {
         ClienteResponseDTO novoCliente = service.salvar(dto);
         
-        // validação e representação ou representar identificadores
+        // URI (URL) de retorno de validação e representação
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(novoCliente.id()) 
