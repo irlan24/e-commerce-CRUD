@@ -15,7 +15,7 @@ import com.cheiroesabor.ecommerce.dto.request.CombosRequestDTO;
 import com.cheiroesabor.ecommerce.dto.response.CombosResponseDTO;
 import com.cheiroesabor.ecommerce.services.CombosService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController
@@ -48,7 +48,7 @@ public class CombosController {
 
     // Exemplo de endpoint para criar combo
     @PostMapping
-    public ResponseEntity<CombosResponseDTO> criarCombo(@RequestBody @Valid CombosRequestDTO dto){
+    public ResponseEntity<CombosResponseDTO> create (@RequestBody @Valid CombosRequestDTO dto){
         CombosResponseDTO novoCombo = service.salvar(dto);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()

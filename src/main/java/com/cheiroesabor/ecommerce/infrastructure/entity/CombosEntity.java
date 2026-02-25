@@ -48,5 +48,16 @@ public class CombosEntity {
     @OneToMany(mappedBy = "combo", fetch = FetchType.LAZY)
     private List<AgendamentosEntity> agendamentos;
 
+
+    // Facilitar a criação de um combo
+    public static CombosEntity criar(CombosList tipo){
+    CombosEntity combo = new CombosEntity();
+    combo.setComboList(tipo);
+    combo.setPrecoCombo(tipo.getValorCombo());
+    combo.setDescricaoCombo(tipo.getDescricao());
+    combo.setStatusCombo(true);
+    return combo;
+}
+
     
 }

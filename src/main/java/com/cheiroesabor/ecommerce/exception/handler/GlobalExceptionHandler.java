@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -80,7 +81,30 @@ public class GlobalExceptionHandler {
         // EXEMPLO DE USO
         // if(repository.existsByEmail(dto.email())){
                 //throw new BusinessException("Email já cadastrado");}
-}
+        }
+
+
+        // Exceção para tratar ENUM e JSON incorretos (Bad_request 400)
+        @ExceptionHandler(HttpMessageNotReadableException.class)
+        public ResponseEntity<MessageError> handleInvalidJson(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        
+        String detailMessage = "Erro na leitura do JSON: Verifique a sintaxe ou tipos de dados.";
+        
+        // Verificamos se o erro foi especificamente na conversão de um Enum
+        if (ex.getMessage() != null && ex.getMessage().contains("CombosList")) {
+                detailMessage = "Valor inválido para o tipo de Combo. Opções aceitas: COMBO_FESTA, COMBO_FAMILIA, COMBO_MINI, COMBO_PERSONALIZADO";
+        }
+
+        MessageError error = new MessageError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Requisição incompreensível",
+                detailMessage,
+                request.getRequestURI()
+        );
+        
+        return ResponseEntity.badRequest().body(error);
+        }
         
 
 

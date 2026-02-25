@@ -1,6 +1,5 @@
 package com.cheiroesabor.ecommerce.services;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,9 +9,11 @@ import com.cheiroesabor.ecommerce.dto.response.CombosResponseDTO;
 import com.cheiroesabor.ecommerce.exception.BusinessException;
 import com.cheiroesabor.ecommerce.exception.ResourceNotFoundException;
 import com.cheiroesabor.ecommerce.infrastructure.entity.CombosEntity;
-import com.cheiroesabor.ecommerce.infrastructure.entity.enums.CombosList;
 import com.cheiroesabor.ecommerce.infrastructure.repository.CombosRepository;
 import com.cheiroesabor.ecommerce.mapper.CombosMapper;
+
+import jakarta.transaction.Transactional;
+
 
 @Service
 public class CombosService {
@@ -37,28 +38,23 @@ public class CombosService {
     // Método para localizar todos os combos disponíveis
     public List<CombosResponseDTO> findAll(){
 
-        List<CombosEntity> combos = repository.findAll();
-
+        // Retorna apenas combos Status ativo (true)
+        List<CombosEntity> combos = repository.findByStatusComboTrue();
         
         return mapper.toDTOList(combos);
     }
 
 
     // Método para salvar combo
+    @Transactional
     public CombosResponseDTO salvar(CombosRequestDTO dto){
 
         if(repository.existsByComboListAndStatusComboTrue(dto.comboList())){
-            throw new BusinessException("Houve duplicidade na escolha dos combos");
+            throw new BusinessException("Já existe um " + dto.comboList() + " ativo no sistema.");
         }
 
-        CombosEntity combo = mapper.toEntity(dto);   
-        CombosList tipoEscolhido = dto.comboList();
-        
-        BigDecimal precoDefinido = tipoEscolhido.getValorCombo();
-        String descricaoCombo = tipoEscolhido.getDescricao();
-        
-        combo.setPrecoCombo(precoDefinido);
-        combo.setDescricaoCombo(descricaoCombo);
+        // Cria um combo completo com base no dto (Combo, preço e descrição)
+        CombosEntity combo = CombosEntity.criar(dto.comboList());
 
         combo = repository.save(combo);
 
