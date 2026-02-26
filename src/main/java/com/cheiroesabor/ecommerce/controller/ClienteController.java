@@ -20,8 +20,14 @@ import com.cheiroesabor.ecommerce.dto.response.ClienteResponseDTO;
 import com.cheiroesabor.ecommerce.dto.update.ClienteUpdateDTO;
 import com.cheiroesabor.ecommerce.services.ClientesService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Tag(name = "Clientes", description = "Endpoints responsáveis pelo gerenciamento dos clientes")
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
@@ -34,7 +40,8 @@ public class ClienteController {
         this.service = service;
     }
 
-    // Exemplo de endpoint para buscar todos os clientes
+    
+    @Operation(summary = "Lista todos os clientes", description = "Retorna uma lista com todos os clientes cadastrados no sistema")
     @GetMapping
     public ResponseEntity<List<ClienteResponseDTO>> findAll() {
 
@@ -42,16 +49,35 @@ public class ClienteController {
         return ResponseEntity.ok(listDto);
     }
 
-    // Exemplo de endpoint para buscar um cliente por ID
+    
+    @Operation(summary = "Busca cliente pelo ID", description = "Retorna o cadastro do cliente se o ID fornecido existir")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
+        @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteResponseDTO> getClienteById(@PathVariable Long id) {
+    public ResponseEntity<ClienteResponseDTO> getClienteById(@Parameter(
+        name = "id", 
+        description = "Identificador do cliente", 
+        example = "1",
+        required = true
+        ) @PathVariable  Long id) {
         ClienteResponseDTO dto = service.findById(id);
         return ResponseEntity.ok(dto);
     }
 
-    // Exemplo de endpoint para criar um novo cliente
+    
+    @Operation(summary = "Cria um novo cliente", description = "Cria o cadastro do cliente conforme os campos obrigatórios fornecidos na requisição")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Erro de validação nos campos enviados"),
+        @ApiResponse(responseCode = "409", description = "Email já cadastrado em sistema")
+    })
     @PostMapping
-    public ResponseEntity<ClienteResponseDTO> criarCliente(@RequestBody @Valid ClienteRequestDTO dto) {
+    public ResponseEntity<ClienteResponseDTO> criarCliente(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Objeto contendo nome, email e demais dados do cliente",
+        required = true
+    ) @RequestBody @Valid ClienteRequestDTO dto) {
         ClienteResponseDTO novoCliente = service.salvar(dto);
         
         // URI (URL) de retorno de validação e representação
@@ -63,7 +89,12 @@ public class ClienteController {
         return ResponseEntity.created(uri).body(novoCliente);
     }
 
-    // Exemplo de endpoint para deletar um cliente por ID
+    
+    @Operation(summary = "Deleta um cliente", description = "Deleta o cliente se o ID correspondente existir")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Cliente localizado e deletado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Dados não localizado pelo ID fornecido")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id){
         service.deletar(id);
@@ -71,7 +102,13 @@ public class ClienteController {
         return ResponseEntity.noContent().build();
     }
 
-    // Exemplo de endpoint para atualizar parcialmente um cliente por ID
+    
+    @Operation(summary = "Possibilita atualizar parcialmente um cliente", description = "Atualiza apenas os campos do cadastro fornecido na requisição")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente localizado e dados atualizados com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Dados não localizado pelo ID fornecido"),
+        @ApiResponse(responseCode = "409", description = "Email já cadastrado no sistema")
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> atualizarParcial(@PathVariable Long id, @RequestBody @Valid ClienteUpdateDTO dto){
 
@@ -79,7 +116,14 @@ public class ClienteController {
         return ResponseEntity.ok(service.patch(id, dto));
     }
 
-    // Exemplo de endpoint para atualizar totalmente um cliente por ID
+    
+    @Operation(summary = "Atualiza todos os dados de um cliente", description = "Atualiza completamente os dados de cadastro do cliente. Todos os campos obrigatórios devem ser enviados na requisição.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente localizado e dados atualizados com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Dados incompletos para atualização do cliente"),
+        @ApiResponse(responseCode = "404", description = "Dados não localizado pelo ID fornecido"),
+        @ApiResponse(responseCode = "409", description = "Email já cadastrado no sistema")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id, @RequestBody @Valid ClienteRequestDTO dto){
 

@@ -37,7 +37,7 @@ public class ClientesEntity {
     private String email;
     
     @Column(nullable = false)
-    private String cell;
+    private String telefone;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AgendamentosEntity> agendamentos = new ArrayList<>();

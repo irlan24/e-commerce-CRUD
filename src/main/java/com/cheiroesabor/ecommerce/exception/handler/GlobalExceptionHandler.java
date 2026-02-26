@@ -6,11 +6,13 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.cheiroesabor.ecommerce.exception.BusinessException;
+import com.cheiroesabor.ecommerce.exception.DuplicateResourceException;
 import com.cheiroesabor.ecommerce.exception.ResourceNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,7 +65,7 @@ public class GlobalExceptionHandler {
         }
 
 
-        // Exceção para tratar as duplicidades de cadastro (PUT ou POST) (Bad_request 400)
+        // Exceção para tratar erros de regras de negócio (Bad_request 400)
         @ExceptionHandler(BusinessException.class)
         public ResponseEntity<MessageError> handleBusiness(
                 BusinessException ex, HttpServletRequest request) {
@@ -104,6 +106,45 @@ public class GlobalExceptionHandler {
         );
         
         return ResponseEntity.badRequest().body(error);
+        }
+
+
+        // Exceção para tratar erros de duplicidades (conflict 409)
+        @ExceptionHandler(DuplicateResourceException.class)
+        public ResponseEntity<MessageError> handleDuplicate(
+                DuplicateResourceException ex, HttpServletRequest request) {
+
+        MessageError error = new MessageError(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+
+        // EXEMPLO DE USO
+        // if(repository.existsByEmail(dto.email())){
+                //throw new DuplicateResourceException("Email já cadastrado");}
+        }
+
+
+        // Exceção para tratar erros genérico (focado no Whitelabel Error Page) (Internal error 500)
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<MessageError> handleGenericException(
+                Exception ex,
+                HttpServletRequest request) {
+
+        MessageError error = new MessageError(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                "Ocorreu um erro inesperado na aplicação.",
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.internalServerError().body(error);
         }
         
 

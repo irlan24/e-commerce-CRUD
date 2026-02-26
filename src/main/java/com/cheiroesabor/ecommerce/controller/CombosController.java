@@ -1,8 +1,6 @@
 package com.cheiroesabor.ecommerce.controller;
-
 import java.net.URI;
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,14 +8,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.cheiroesabor.ecommerce.dto.request.CombosRequestDTO;
 import com.cheiroesabor.ecommerce.dto.response.CombosResponseDTO;
 import com.cheiroesabor.ecommerce.services.CombosService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 
+
+
+
+
+@Tag(name = "Combos", description = "Endpoints responsáveis pelo gerenciamento de combos")
 @RestController
 @RequestMapping("/combos")
 public class CombosController {
@@ -28,16 +35,27 @@ public class CombosController {
         this.service = service;
     }
 
-    // Exemplo de endpoint para buscar um combo por ID
+    
+    @Operation(summary = "Busca combo pelo ID", description = "Retorna o combo do cliente se o ID fornecido existir")
+    @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Combo localizado com sucesso"),
+    @ApiResponse(responseCode = "404", description = "Dados não localizado pelo ID fornecido")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<CombosResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<CombosResponseDTO> findById(@Parameter(
+        name = "id", 
+        description = "Identificador do combo", 
+        example = "1",
+        required = true
+        ) @PathVariable Long id){
 
         CombosResponseDTO dto = service.findById(id);
 
         return ResponseEntity.ok(dto);
     }
 
-    // Exemplo de endpoint para buscar todos os combo
+    
+    @Operation(summary = "Lista todos os combos criados", description = "Retorna uma lista com todos os combos cadastrados no sistema")
     @GetMapping
     public ResponseEntity<List<CombosResponseDTO>> findAll(){
 
@@ -46,7 +64,12 @@ public class CombosController {
         return ResponseEntity.ok(listDto);
     }
 
-    // Exemplo de endpoint para criar combo
+    
+    @Operation(summary = "Seleciona um combo", description = "Seleciona o combo conforme as opções disponíveis")
+    @ApiResponses(value = {
+    @ApiResponse(responseCode = "201", description = "Combo escolhido com sucesso"),
+    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    })
     @PostMapping
     public ResponseEntity<CombosResponseDTO> create (@RequestBody @Valid CombosRequestDTO dto){
         CombosResponseDTO novoCombo = service.salvar(dto);

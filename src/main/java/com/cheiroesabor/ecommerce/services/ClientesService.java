@@ -8,6 +8,7 @@ import com.cheiroesabor.ecommerce.dto.request.ClienteRequestDTO;
 import com.cheiroesabor.ecommerce.dto.response.ClienteResponseDTO;
 import com.cheiroesabor.ecommerce.dto.update.ClienteUpdateDTO;
 import com.cheiroesabor.ecommerce.exception.BusinessException;
+import com.cheiroesabor.ecommerce.exception.DuplicateResourceException;
 import com.cheiroesabor.ecommerce.exception.ResourceNotFoundException;
 import com.cheiroesabor.ecommerce.infrastructure.entity.ClientesEntity;
 import com.cheiroesabor.ecommerce.infrastructure.repository.ClienteRepository;
@@ -46,7 +47,7 @@ public class ClientesService {
     public ClienteResponseDTO salvar(ClienteRequestDTO dto){
 
         if(repository.existsByEmail(dto.email())){
-                throw new BusinessException("Email já cadastrado");}
+                throw new DuplicateResourceException("Email já cadastrado para outro cliente");}
 
         ClientesEntity cliente = mapper.toEntity(dto);
 
@@ -71,7 +72,7 @@ public class ClientesService {
 
         // valida apenas se o email foi enviado
         if(dto.email() != null && repository.existsByEmailAndIdNot(dto.email(), id)){
-            throw new BusinessException("Email já cadastrado para outro cliente");
+            throw new DuplicateResourceException("Email já cadastrado para outro cliente");
         }
 
         mapper.partialUpdate(dto, cliente);
@@ -88,7 +89,7 @@ public class ClientesService {
         ClientesEntity cliente = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cliente não identificado para atualização"));
 
         if(repository.existsByEmailAndIdNot(dto.email(), id)){
-            throw new BusinessException("Email cadastrado para outro cliente");
+            throw new DuplicateResourceException("Email cadastrado para outro cliente");
         }
 
         mapper.updateEntityFromDto(dto, cliente);

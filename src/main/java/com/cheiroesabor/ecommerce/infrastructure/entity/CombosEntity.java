@@ -55,7 +55,7 @@ public class CombosEntity {
     combo.setComboList(tipo);
     combo.setPrecoCombo(tipo.getValorCombo());
     combo.setDescricaoCombo(tipo.getDescricao());
-    combo.setStatusCombo(true);
+    combo.setStatusCombo(tipo.getStatus());
     return combo;
 }
 

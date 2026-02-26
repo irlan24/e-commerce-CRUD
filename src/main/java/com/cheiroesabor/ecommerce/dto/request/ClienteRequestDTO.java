@@ -1,17 +1,21 @@
 package com.cheiroesabor.ecommerce.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 public record ClienteRequestDTO(
+    @Schema(example = "nome cliente")
     @NotBlank(message = "O nome é obrigatório")
     String nome,
 
+    @Schema(example = "nomeExemplo@dominioExemplo.com")
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "Formato de e-mail inválido")
     String email,
 
+    @Schema(example = "71999998888")
     @NotBlank(message = "O celular é obrigatório")
     @Pattern(regexp = "\\d{10,11}", message = "O celular deve ter entre 10 e 11 dígitos")
     String telefone
